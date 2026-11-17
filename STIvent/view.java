@@ -1,240 +1,298 @@
 package STIvent;
 import java.util.*;
 
-class  Event {
-    String EventName;
-    String EventDate;
-    String EventPlace;
-    String EventParticipants;
-    String EventTime;
+class Event {
 
-    Event(String name, String date, String place, String participants, String time) {
-        this.EventName = name;
-        this.EventDate = date;
-        this.EventPlace = place;
-        this.EventParticipants = participants;
-        this.EventTime = time;
+    private String eventName;
+    private String eventDate;
+    private String eventPlace;
+    private String eventTime;
+    private String eventDescription;
+    private ArrayList<String> targetLevels;
+    private ArrayList<String> targetCourses;
+
+    Event(String name, String date, String place, String time,
+          String description, ArrayList<String> levels,
+          ArrayList<String> courses) {
+
+        this.eventName = name;
+        this.eventDate = date;
+        this.eventPlace = place;
+        this.eventTime = time;
+        this.eventDescription = description;
+        this.targetLevels = levels;
+        this.targetCourses = courses;
+            }
+
+    public String getEventName() {
+        return eventName;
+   }
+
+    public String getEventDate() {
+        return eventDate;
+  }
+
+    public String getEventPlace() {
+        return eventPlace;
+   }
+
+    public String getEventTime() {
+        return eventTime;
+      }
+
+    public String getEventDescription() {
+        return eventDescription;
+     }
+
+    public ArrayList<String> getTargetLevels() {
+        return targetLevels;
+    }
+
+    public ArrayList<String> getTargetCourses() {
+        return targetCourses;
+    }
+
+    public void displayDetails() {
+        System.out.println("Event Name: " + eventName);
+        System.out.println("Event Date: " + eventDate);
+        System.out.println("Event Place: " + eventPlace);
+        System.out.println("Event Time: " + eventTime);
+        System.out.println("Description: " + eventDescription);
+        System.out.println();
     }
 }
 
-abstract class Participant {
-    String Level;
+class StudentSelection {
+    private String schoolLevel;
+    private String course;
 
-    List<Event> events = new ArrayList<>();
-
-    Participant(String level) {
-        this.Level = level;
+    StudentSelection(String level, String course) {
+        this.schoolLevel = level;
+        this.course = course;
     }
-    abstract String getEventDetails();
+    public String getSchoolLevel() {
+        return schoolLevel;
+    }
+    public String getCourse() {
+        return course;
+    }
 }
 
-class HighSchoolStudent extends Participant {
-    HighSchoolStudent(String level) {
-        super(level);
+class EventData {
+    public static ArrayList<Event> getEvents() {
+
+        ArrayList<Event> events = new ArrayList<>();
+
+        events.add(new Event("STIvent Launch", "2026-12-01", "STI College", "8:00 AM - 12:00 NN", "School-wide event",
+            new ArrayList<>(Arrays.asList("ALL")),
+            new ArrayList<>(Arrays.asList("ALL"))
+        ));
+
+        events.add(new Event("Junior High School Activity", "2026-12-05", "School Auditorium", "9:00 AM - 12:00 NN", "Activity for all Junior High School students",
+            new ArrayList<>(Arrays.asList("Junior High School")),
+            new ArrayList<>(Arrays.asList("ALL"))
+        ));
+
+        events.add(new Event("Senior High School Seminar", "2026-12-08", "School Auditorium", "1:00 PM - 3:00 PM", "Seminar for all Senior High School students",
+            new ArrayList<>(Arrays.asList("Senior High School")),
+            new ArrayList<>(Arrays.asList("ALL"))
+        ));
+
+        events.add(new Event("STEM Seminar", "2026-12-10", "School Auditorium", "9:00 AM - 12:00 NN", "Seminar for STEM and ETM students",
+            new ArrayList<>(Arrays.asList("Senior High School")),
+            new ArrayList<>(Arrays.asList("STEM and ETM"))
+        ));
+
+        events.add(new Event("ICT Technology Activity", "2026-12-12", "Computer Laboratory", "1:00 PM - 3:00 PM", "Activity for ICT and SCPT students",
+            new ArrayList<>(Arrays.asList("Senior High School")),
+            new ArrayList<>(Arrays.asList("ICT and SCPT"))
+        ));
+
+        events.add(new Event("IT Technology Seminar", "2026-12-15", "Computer Laboratory", "1:00 PM - 3:00 PM", "Seminar for IT students",
+            new ArrayList<>(Arrays.asList("College")),
+            new ArrayList<>(Arrays.asList("BSIT"))
+        ));
+
+        events.add(new Event("College Sports Festival", "2026-12-18", "School Gymnasium", "8:00 AM - 5:00 PM", "Sports event for all college courses",
+            new ArrayList<>(Arrays.asList("College")),
+            new ArrayList<>(Arrays.asList("ALL"))
+        ));
+
+        return events;
+    }
+}
+
+class EventManager {
+    private ArrayList<Event> events;
+
+    EventManager(ArrayList<Event> events) {
+        this.events = events;
     }
 
-    @Override
-    String getEventDetails() {
-        StringBuilder details = new StringBuilder();
+    public ArrayList<Event> getApplicableEvents(
+        StudentSelection student) {
+
+        ArrayList<Event> matchingEvents = new ArrayList<>();
+
         for (Event event : events) {
-            details.append("Event Name: ").append(event.EventName).append("\n");
-            details.append("Event Date: ").append(event.EventDate).append("\n");
-            details.append("Event Place: ").append(event.EventPlace).append("\n");
-            details.append("Event Participants: ").append(event.EventParticipants).append("\n");
-            details.append("Event Time: ").append(event.EventTime).append("\n\n");
+
+            boolean levelMatch =
+                event.getTargetLevels().contains("ALL") ||
+                event.getTargetLevels().contains(
+                    student.getSchoolLevel()
+                );
+
+            boolean courseMatch =
+                event.getTargetCourses().contains("ALL") ||
+                (student.getCourse() != null &&
+                 event.getTargetCourses().contains(
+                    student.getCourse()
+                 ));
+
+            if (levelMatch && courseMatch) {
+                matchingEvents.add(event);
+            }
         }
-        return details.toString();
+
+        return matchingEvents;
     }
-}
-
-class SeniorHighSchoolStudent extends Participant {
-    SeniorHighSchoolStudent(String level) {
-        super(level);
-    }
-
-    @Override
-    String getEventDetails() {
-        StringBuilder details = new StringBuilder();
-        for (Event event : events) {
-            details.append("Event Name: ").append(event.EventName).append("\n");
-            details.append("Event Date: ").append(event.EventDate).append("\n");
-            details.append("Event Place: ").append(event.EventPlace).append("\n");
-            details.append("Event Participants: ").append(event.EventParticipants).append("\n");
-            details.append("Event Time: ").append(event.EventTime).append("\n\n");
-        }
-        return details.toString();
-    }
-}
-
-class HTCUAStudent extends SeniorHighSchoolStudent {
-    HTCUAStudent(String level) {
-        super(level);
-    }
-}
-
-class HTTOStudent extends SeniorHighSchoolStudent {
-    HTTOStudent(String level) {
-        super(level);
-    }
-}
-
-class ASSHStudent extends SeniorHighSchoolStudent {
-    ASSHStudent(String level) {
-        super(level);
-    }
-}
-
-class STEMandETMStudent extends SeniorHighSchoolStudent {
-    STEMandETMStudent(String level) {
-        super(level);
-    }
-}
-
-class BandEStudent extends SeniorHighSchoolStudent {
-    BandEStudent(String level) {
-        super(level);
-    }
-}
-
-class ICTandSCPTStudent extends SeniorHighSchoolStudent {
-    ICTandSCPTStudent(String level) {
-        super(level);
-    }
-}
-
-class CollegeStudent extends Participant {
-    CollegeStudent(String level) {
-        super(level);
-    }
-
-    @Override
-    String getEventDetails() {
-        StringBuilder details = new StringBuilder();
-        for (Event event : events) {
-            details.append("Event Name: ").append(event.EventName).append("\n");
-            details.append("Event Date: ").append(event.EventDate).append("\n");
-            details.append("Event Place: ").append(event.EventPlace).append("\n");
-            details.append("Event Participants: ").append(event.EventParticipants).append("\n");
-            details.append("Event Time: ").append(event.EventTime).append("\n\n");
-        }
-        return details.toString();
-    }
-}
-
-class BSCSStudent extends CollegeStudent {
-    BSCSStudent(String level) {
-        super(level);
-    }
-}
-
-class BSITStudent extends CollegeStudent {
-    BSITStudent(String level) {
-        super(level);
-    }
-}
-
-class BSAISStudent extends CollegeStudent {
-    BSAISStudent(String level) {
-        super(level);
-    }
-}
-
-class BSAStudent extends CollegeStudent {
-    BSAStudent(String level) {
-        super(level);
-    }
-}
-
-class BSHMStudent extends CollegeStudent {
-    BSHMStudent(String level) {
-        super(level);
-    }
-}
-
-class BSTMStudent extends CollegeStudent {
-    BSTMStudent(String level) {
-        super(level);
-    }
-}
-
-class BSNAMEStudent extends CollegeStudent {
-    BSNAMEStudent(String level) {
-        super(level);
-    }
-}
-
-class BSMarEStudent extends CollegeStudent {
-    BSMarEStudent(String level) {
-        super(level);
-    }
-}
-
-class BSMTStudent extends CollegeStudent {
-    BSMTStudent(String level) {
-        super(level);
-    }
-}
-
-class HighSchoolEvent {
-    private ArrayList<Event> events = new ArrayList<>();
-
-     public HighSchoolEvent() {
-        events.add(new Event("STIvent Launch", "2024-06-01", "STI College", "All Students", "8:00 AM - 12:00 NN"));
-        events.add(new Event("STIvent Tech Talk", "2024-06-05", "STI College Auditorium", "IT Students", "1:00 PM - 3:00 PM"));
-    }
-    public void displayEvents() {
-        for (Event event : events) {
-            System.out.println("- " + event.EventName);
-        }
-    }
-}
-
-class SeniorHighschoolEvent {
-
-}
-
-class CollegeEvent {
-
 }
 
 public class view {
-    static Scanner sc = new Scanner(System.in);
-    static HashMap<String, Participant> participants = new HashMap<>();
-    static List<Event> events = new ArrayList<>();
-    public static void main(String[] args) {
-        while (true) {
-            System.out.println("====== STIvent! ======");
-        System.out.println("Stay uptaded with the latest school activities!");
-        System.out.println("\nWelcome to STIvent!");
-        System.out.println("\nFeatured Events:");
-        System.out.println("\nUpcoming Activities:");
-        System.out.println("Select your school Level");
-        System.out.println("1. Highschool");
-        System.out.println("2. Senior Highschool");
-        System.out.println("3. College");
-            String choice = sc.nextLine();
-            if (choose(choice, "1", "one", "Highschool Student")) {
-                HighSchoolEvent();
-            }
-            else if (choose(choice, "2", "two", "Senior Highschool Student")) {
-                SeniorHighschoolEvent();
-            }
-            else if (choose(choice, "3", "three", "College Student")) {
-                CollegeEvent();
-            }
-            else {
-                System.out.println("Invalid choice");
-            }
-        }
-    }
-    static boolean choose(String input, String... options) {
-        input = input.toLowerCase();
+static Scanner sc = new Scanner(System.in);
 
-        for (String option : options) {
-            if (input.equals(option.toLowerCase())) {
-                return true;
+    public static void main(String[] args) {
+
+        System.out.println("------- STIvent! -------");
+        System.out.println("Stay updated with the latest school activities!");
+        System.out.println("\nWelcome to STIvent!");
+
+        System.out.println("\nSelect your school level:");
+        System.out.println("1. Junior High School");
+        System.out.println("2. Senior High School");
+        System.out.println("3. College\n");
+
+     System.out.print("\nEnter: ");
+     String choice = sc.nextLine();
+
+     String level = "";
+     String course = null;
+
+        if (choice.equals("1")) {
+            level = "Junior High School";
+        }
+        else if (choice.equals("2")) {
+
+            level = "Senior High School";
+
+            System.out.println("\nSelect your strand:");
+            System.out.println("1. HTCUA");
+            System.out.println("2. HTTO");
+            System.out.println("3. ASSH");
+            System.out.println("4. STEM and ETM");
+            System.out.println("5. B and E");
+            System.out.println("6. ICT and SCPT\n");
+
+            System.out.print("\nEnter: ");
+            String strandChoice = sc.nextLine();
+
+            switch (strandChoice) {
+                case "1":
+                    course = "HTCUA";
+                    break;
+                case "2":
+                    course = "HTTO";
+                    break;
+                case "3":
+                    course = "ASSH";
+                    break;
+                case "4":
+                    course = "STEM and ETM";
+                    break;
+                case "5":
+                    course = "B and E";
+                    break;
+                case "6":
+                    course = "ICT and SCPT";
+                    break;
+                default:
+                    System.out.println("Invalid strand selection.");
+                    return;
             }
         }
-        return false;
+        else if (choice.equals("3")) {
+
+          level = "College";
+            System.out.println("\nSelect your course:");
+            System.out.println("1. BSCS");
+            System.out.println("2. BSIT");
+            System.out.println("3. BSAIS");
+            System.out.println("4. BSA");
+            System.out.println("5. BSHM");
+            System.out.println("6. BSTM");
+            System.out.println("7. BSNAME");
+            System.out.println("8. BSMarE");
+            System.out.println("9. BSMT");
+
+            System.out.print("\nEnter: ");
+            String courseChoice = sc.nextLine();
+
+            switch (courseChoice) {
+                case "1":
+                    course = "BSCS";
+                    break;
+                case "2":
+                    course = "BSIT";
+                    break;
+                case "3":
+                    course = "BSAIS";
+                    break;
+                case "4":
+                    course = "BSA";
+                    break;
+                case "5":
+                    course = "BSHM";
+                    break;
+                case "6":
+                    course = "BSTM";
+                    break;
+                case "7":
+                    course = "BSNAME";
+                    break;
+                case "8":
+                    course = "BSMarE";
+                    break;
+                case "9":
+                    course = "BSMT";
+                    break;
+                default:
+                    System.out.println("Invalid course selection.");
+                    return;
+            }
+        }
+        else {
+            System.out.println("Invalid school level selection.");
+            return;
+        }
+
+        StudentSelection student =
+            new StudentSelection(level, course);
+
+        EventManager manager =
+            new EventManager(EventData.getEvents());
+
+        ArrayList<Event> applicableEvents =
+            manager.getApplicableEvents(student);
+
+        System.out.println("\n------- Upcoming Events -------");
+
+        if (applicableEvents.isEmpty()) {
+            System.out.println("No available events.");
+        }
+        else {
+            for (Event event : applicableEvents) {
+                event.displayDetails();
+            }
+        }
     }
 }
